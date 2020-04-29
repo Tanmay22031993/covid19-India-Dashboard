@@ -1,0 +1,4 @@
+[build]
+base = "covidtracker/"
+publish = "covidtracker/build/"
+command = "npm run build"
