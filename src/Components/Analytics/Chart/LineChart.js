@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchDailyData } from '../../api/index';
+import { fetchDailyData } from '../../../api/index';
 import { Typography } from '@material-ui/core';
 import {
     LineChart,

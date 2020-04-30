@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { fetchCountries, fetchStateWiseData } from '../../api/index';
+import { fetchCountries, fetchStateWiseData } from '../../../api/index';
 function CountryPicker(props) {
     const [countries, setCountries] = useState({});
     const [states, setStates] = useState({});
     const [selectedCountry, setSelectedCountry] = useState('');
     function handleCountrySelection(selectedOption) {
-        setSelectedCountry(selectedOption ? selectedOption.value :  '');
+        setSelectedCountry(selectedOption ? selectedOption.value : '');
         props.handleCountryChange(selectedOption);
     }
     useEffect(() => {
@@ -45,13 +45,15 @@ function CountryPicker(props) {
                 <p style={{ fontStyle: 'italic', fontSize: '12px' }}>
                     * daily trend chart is available only for INDIA
                 </p>
-                 {selectedCountry === 'IND' ?  <Select
-                    //defaultValue={{ label: 'India', value: 'IND' }}
-                    options={tempCountries}
-                    onChange={handleCountrySelection}
-                    isClearable
-                    placeholder="Select State"
-                /> : null}
+                {selectedCountry === 'IND' ? (
+                    <Select
+                        //defaultValue={{ label: 'India', value: 'IND' }}
+                        options={tempCountries}
+                        onChange={handleCountrySelection}
+                        isClearable
+                        placeholder="Select State"
+                    />
+                ) : null}
             </React.Fragment>
         );
     }

@@ -1,15 +1,22 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import './App.css';
-import Cards from './Components/Cards/cards';
-import GlobalLineChart from './Components/Chart/LineChart';
-import CountryBarChart from './Components/Chart/BarChart';
-import DailyTrendChart from './Components/Chart/DailyTrendChart';
-import CountryPicker from './Components/CountrySelector/countrySelector';
+import Cards from './Components/Analytics/Cards/cards';
+import GlobalLineChart from './Components/Analytics/Chart/LineChart';
+import CountryBarChart from './Components/Analytics/Chart/BarChart';
+import DailyTrendChart from './Components/Analytics/Chart/DailyTrendChart';
+import CountryPicker from './Components/Analytics/CountrySelector/countrySelector';
+import Precautions from './Components/Precautions/precautions';
+import Resources from './Components/Resources/resources';
+import Symptom from './Components/Symptomps/symptomp';
+import TestCentre from './Components/Testcentres/testCentre';
 import { fetchData, fetchCountryData, fetchDailyTrends, fetchStateWiseData } from './api';
 import facebookIcon from './Images/facebookIcon.png';
 import linkedInIcon from './Images/linkedInIcon.webp';
 import loveIcon from './Images/love.png';
-import { Divider, Typography } from '@material-ui/core';
+import { Divider, Typography, AppBar, Tabs, Tab, Button, Grid } from '@material-ui/core';
+import { allViews } from './helper';
+import { Money, People, ShowChart, BubbleChart, LocalHospital, Help } from '@material-ui/icons';
 class App extends React.Component {
     state = {
         data: {},
@@ -17,6 +24,7 @@ class App extends React.Component {
         //country: { label: 'India', value: 'IND' },
         country: '',
         dailyTrendData: '',
+        activeView: 0,
     };
     async componentDidMount() {
         const fetchedData = await fetchData();
@@ -30,17 +38,19 @@ class App extends React.Component {
             //let fetchedStateWiseData = await fetchStateWiseData(country);
             if (fetchedDailyTrends) {
                 /* reformatted the dailyconfirmed as recharts expects values in numbers instaed of strings */
-                let formattedDailyTrends =  fetchedDailyTrends.data.cases_time_series.slice(-7).map(obj => {
-                    obj['dailyconfirmed'] = parseInt(obj['dailyconfirmed'])
-                    obj['dailydeceased'] = parseInt(obj['dailyconfirmed'])
-                    obj['dailyrecovered'] = parseInt(obj['dailyrecovered'])
-                    return obj
-                 })
-                 console.log(formattedDailyTrends)
+                let formattedDailyTrends = fetchedDailyTrends.data.cases_time_series
+                    .slice(-7)
+                    .map((obj) => {
+                        obj['dailyconfirmed'] = parseInt(obj['dailyconfirmed']);
+                        obj['dailydeceased'] = parseInt(obj['dailyconfirmed']);
+                        obj['dailyrecovered'] = parseInt(obj['dailyrecovered']);
+                        return obj;
+                    });
+                console.log(formattedDailyTrends);
                 this.setState({
                     country: country.value,
-                    dailyTrendData: formattedDailyTrends
-               });
+                    dailyTrendData: formattedDailyTrends,
+                });
             }
         }
         if (country) {
@@ -49,32 +59,104 @@ class App extends React.Component {
             this.setState({ country: '', data: fetchedData.data });
         }
     }
+
+    activeView = (value) => {
+        this.setState({ activeView: value });
+    };
+    showIcon = (i) => {
+        switch (i) {
+            case 0:
+                return <ShowChart className="subnavIcon" />;
+            case 1:
+                return <People className="subnavIcon" />;
+            case 2:
+                return <BubbleChart className="subnavIcon" />;
+            case 3:
+                return <LocalHospital className="subnavIcon" />;
+            case 4:
+                return <Help className="subnavIcon" />;
+            default:
+                return null;
+        }
+    };
     render() {
-        const { data, dailyTrendData, country } = this.state;
+        const { data, dailyTrendData, country, activeView } = this.state;
         return (
             <div className="parentContainer">
-                <div className="banner"> Coming Soon: State wise data for India</div>
-                <div className="header"></div>
-                <div className="countryPickerContainer">
-                    <CountryPicker handleCountryChange={this.handleCountryChange.bind(this)} />
+                <div className="header">
+                    <Grid
+                        container
+                        spacing={0}
+                        justify="center"
+                        alignItems="center"
+                        style={{ padding: '1%' }}
+                    >
+                        <Grid item xs={12} md={9} sm={9}>
+                            <span className="branding">covid 19 Dashboard</span>
+                        </Grid>
+                        <Grid item xs={12} md={3} sm={3} style={{ textAlign: 'center' }}>
+                            <Button variant="contained" color="primary" startIcon={<Money />}>
+                                Donate
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </div>
-                <div className="cardContainer">
-                    <Cards data={data} />
+                <div className="subnav">
+                    {allViews.map((item, i) => (
+                        <a
+                            key={i}
+                            href="#"
+                            className="subnavitems"
+                            onClick={() => this.activeView(i)}
+                        >
+                            {this.showIcon(i)}
+                            <span
+                                className={
+                                    activeView === i
+                                        ? 'subnav-innercontainer-selected'
+                                        : 'subnavInnerContainer'
+                                }
+                            >
+                                {item}
+                            </span>
+                        </a>
+                    ))}
                 </div>
-                {country.value === 'IND' ? (
-                    <div className="trendChartContainer">
-                        <DailyTrendChart dailyTrendData={dailyTrendData} country={country} />{' '}
-                    </div>
+                {/* <div className="banner"> Coming Soon: State wise data for India</div> */}
+                {/* <div className="contentArea"> */}
+                {activeView === 0 ? (
+                    <React.Fragment>
+                        <div className="countryPickerContainer">
+                            <CountryPicker
+                                handleCountryChange={this.handleCountryChange.bind(this)}
+                            />
+                        </div>
+                        <div className="cardContainer">
+                            <Cards data={data} />
+                        </div>
+                        {country.value === 'IND' ? (
+                            <div className="trendChartContainer">
+                                <DailyTrendChart
+                                    dailyTrendData={dailyTrendData}
+                                    country={country}
+                                />{' '}
+                            </div>
+                        ) : null}
+                        {country ? (
+                            <div className="countryChartContainer">
+                                <CountryBarChart countryData={data} />
+                            </div>
+                        ) : null}
+                        <div className="globalChartContainer">
+                            <GlobalLineChart />
+                        </div>
+                    </React.Fragment>
                 ) : null}
-                {country ? (
-                    <div className="countryChartContainer">
-                        <CountryBarChart countryData={data} />
-                    </div>
-                ) : null}
-                <div className="globalChartContainer">
-                    <GlobalLineChart />
-                </div>
-                <Divider />
+                {activeView === 1 ? <Precautions /> : null}
+                {activeView === 2 ? <Symptom /> : null}
+                {activeView === 3 ? <TestCentre /> : null}
+                {activeView === 4 ? <Resources /> : null}
+                {/* </div> */}
                 <div className="socialMedia">
                     <a href="https://www.facebook.com/tanmaybiswas.22">
                         <img alt="facebook" src={facebookIcon} width="50" height="50" />
