@@ -24,12 +24,9 @@ function renderCustomAxisTick(props) {
     );
 }
 
-function GlobalCases(allData) {
+function GlobalCases(allData, country) {
     return (
         <React.Fragment>
-            <Typography color="textSecondary" variant="h6">
-                Global Data
-            </Typography>
             <ResponsiveContainer width="100%" height="80%">
                 <LineChart
                     // width={730}
@@ -37,7 +34,7 @@ function GlobalCases(allData) {
                     data={allData}
                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                 >
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="1 1" />
                     <XAxis
                         dataKey="reportDate"
                         padding={{ left: 20, right: 20 }}
@@ -48,25 +45,34 @@ function GlobalCases(allData) {
                     <Legend verticalAlign="top" />
                     <Line
                         type="monotone"
-                        dataKey="deaths"
-                        dot={false}
-                        stroke="#FF0000"
-                        strokeWidth={3}
-                    />
-                    <Line
-                        type="monotone"
                         dataKey="confirmed"
                         dot={false}
                         stroke="#8884d8"
                         strokeWidth={3}
                     />
+                    <Line
+                        type="monotone"
+                        dataKey="deaths"
+                        dot={false}
+                        stroke="#FF0000"
+                        strokeWidth={3}
+                    />
+                    {country === 'IND' ? (
+                        <Line
+                            type="monotone"
+                            dataKey="recovered"
+                            dot={false}
+                            stroke="#7FD97F"
+                            strokeWidth={3}
+                        />
+                    ) : null}
                 </LineChart>
             </ResponsiveContainer>
         </React.Fragment>
     );
 }
 
-function GlobalLineChart() {
+function GlobalLineChart(props) {
     const [dailyData, setDailyData] = useState({});
     let modifiedGlobalData = [];
     useEffect(() => {
@@ -84,8 +90,16 @@ function GlobalLineChart() {
             deaths: p.deaths.total,
         }));
     }
+    if (props.country === 'IND' && props.timeSeriesData) {
+        modifiedGlobalData = props.timeSeriesData.map((p) => ({
+            reportDate: p.date,
+            confirmed: parseInt(p.totalconfirmed),
+            deaths: parseInt(p.totaldeceased),
+            recovered: parseInt(p.totalrecovered),
+        }));
+    }
     if (modifiedGlobalData.length > 0) {
-        return GlobalCases(modifiedGlobalData);
+        return GlobalCases(modifiedGlobalData, props.country);
     }
 
     return null;

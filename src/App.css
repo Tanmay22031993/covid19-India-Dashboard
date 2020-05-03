@@ -1,3 +1,6 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
 .parentContainer {
     display: flex;
     align-items: center;
@@ -11,26 +14,56 @@
 }
 .globalChartContainer {
     height: 300px;
-    margin: 10px 50px;
-    width: 80%;
+    margin: 20px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.countryPickerContainer {
-    width: 90%;
+.dataScopeRadioGroup {
+    /* width: 90%; */
     /* margin: 20px; */
 }
 .countryChartContainer {
-    height: 300px;
-    margin: 10px 50px;
+    height: 500px;
+    margin: 20px 50px;
     width: 90%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    /* flex-direction: column; */
+    /* align-items: center; */
+    /* flex-wrap: wrap; */
+}
+.stateWiseTable {
+    width: 90%;
+    height: 300px;
+    overflow: auto;
+}
+
+/* Create four equal columns */
+.indiaChart {
+    flex: 50%;
+}
+
+/* On screens that are 992px wide or less, go from four columns to two columns */
+/* @media screen and (max-width: 992px) {
+    .indiaChart {
+        flex: 50%;
+    }
+} */
+
+/* On screens that are 600px wide or less, make the columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+    .countryChartContainer {
+        flex-direction: column;
+    }
+}
+
+.timeSpan {
+    margin-left: 50px;
+    margin-right: auto;
 }
 .trendChartContainer {
-    margin: 10px 50px;
+    margin: 20px 50px;
     width: 90%;
 }
 .socialMedia {
@@ -123,4 +156,11 @@ a {
     color: white;
     width: 100%;
     height: 30px;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+thead {
+    background-color: #c1c1c1;
 }

@@ -31,8 +31,10 @@ function Cards(props) {
                                     separator=","
                                 />
                             </Typography>
-                            <Typography color="textSecondary">
-                                {new Date(props.data.lastUpdate).toDateString()}
+                            <Typography style={{ fontSize: '14px' }} color="textSecondary">
+                                {props.country !== 'IND'
+                                    ? new Date(props.data.lastUpdate).toDateString()
+                                    : `${props.data.lastUpdate} IST`}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -44,13 +46,15 @@ function Cards(props) {
                             <Typography variant="h5" style={{ color: 'rgba(0, 179, 0, 1)' }}>
                                 <CountUp
                                     start={0}
-                                    end={props.data.recovered}
+                                    end={parseInt(props.data.recovered)}
                                     duration={2.5}
                                     separator=","
                                 />
                             </Typography>
-                            <Typography color="textSecondary">
-                                {new Date(props.data.lastUpdate).toDateString()}
+                            <Typography style={{ fontSize: '14px' }} color="textSecondary">
+                                {props.country !== 'IND'
+                                    ? new Date(props.data.lastUpdate).toDateString()
+                                    : `${props.data.lastUpdate} IST`}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -62,13 +66,15 @@ function Cards(props) {
                             <Typography variant="h5" style={{ color: 'rgba(255, 0, 0, 0.8)' }}>
                                 <CountUp
                                     start={0}
-                                    end={props.data.deaths}
+                                    end={parseInt(props.data.deaths)}
                                     duration={2.5}
                                     separator=","
                                 />
                             </Typography>
-                            <Typography color="textSecondary">
-                                {new Date(props.data.lastUpdate).toDateString()}
+                            <Typography style={{ fontSize: '14px' }} color="textSecondary">
+                                {props.country !== 'IND'
+                                    ? new Date(props.data.lastUpdate).toDateString()
+                                    : `${props.data.lastUpdate} IST`}
                             </Typography>
                         </CardContent>
                     </Card>

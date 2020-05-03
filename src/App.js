@@ -3,89 +3,69 @@ import React from 'react';
 import './App.css';
 import Cards from './Components/Analytics/Cards/cards';
 import GlobalLineChart from './Components/Analytics/Chart/LineChart';
-import CountryBarChart from './Components/Analytics/Chart/BarChart';
+import IndiaBarChart from './Components/Analytics/Chart/IndiaBarChart';
 import IndiaTrendChart from './Components/Analytics/Chart/IndiaTrendChart';
 import StatePicker from './Components/Analytics/StateSelector/stateSelector';
 import StateWiseTable from './Components/Analytics/StateWiseData/stateTable';
-import Precautions from './Components/Precautions/precautions';
+import IndiaTimeSeries from './Components/Analytics/Chart/IndiaTimeSeries';
 import Resources from './Components/Resources/resources';
 import Symptom from './Components/Symptomps/symptomp';
 import TestCentre from './Components/Testcentres/testCentre';
-import { fetchGlobalData, fetchCountryData, fetchDailyTrends } from './api';
+import { fetchGlobalData, fetchDailyTrends } from './api';
 import facebookIcon from './Images/facebookIcon.png';
 import linkedInIcon from './Images/linkedInIcon.webp';
 import loveIcon from './Images/love.png';
-import {
-    Divider,
-    Typography,
-    AppBar,
-    Tabs,
-    Tab,
-    Button,
-    Grid,
-    FormControl,
-    Radio,
-    RadioGroup,
-    FormControlLabel,
-    Tooltip,
-    IconButton,
-} from '@material-ui/core';
+import { Typography, Button, Grid, Radio, RadioGroup, FormControlLabel } from '@material-ui/core';
 import { allViews } from './helper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faChartLine,
     faQuestionCircle,
-    faHospital,
+    faHospitalSymbol,
     faRupeeSign,
     faChartPie,
 } from '@fortawesome/free-solid-svg-icons';
 
 class App extends React.Component {
     state = {
-        data: {},
+        cardData: {},
+        indiaData: {},
+        globalData: {},
         countryData: '',
-        //country: { label: 'India', value: 'IND' },
         country: 'GLOBAL',
         dailyTrendData: '',
         activeView: 0,
-        optionSelected: 'GLOBAL',
+        modifiedYTDData: [],
+        timeSpan: 'YTD',
     };
     async componentDidMount() {
         const fetchedGlobalData = await fetchGlobalData();
-        this.setState({ data: fetchedGlobalData });
+        this.setState({ globalData: fetchedGlobalData, cardData: fetchedGlobalData });
+        const fetchedDailyTrends = await fetchDailyTrends();
+        const stateWiseData = fetchedDailyTrends.data.statewise;
+        const timeSeriesData = fetchedDailyTrends.data.cases_time_series;
+        const totalData = fetchedDailyTrends.data.statewise[0];
+        const formattedIndiaData = {
+            confirmed: totalData.confirmed,
+            recovered: totalData.recovered,
+            deaths: totalData.deaths,
+            lastUpdate: totalData.lastupdatedtime,
+        };
+        this.setState({
+            indiaData: formattedIndiaData,
+            stateWiseData: stateWiseData,
+            timeSeriesData: timeSeriesData,
+            modifiedYTDData: timeSeriesData,
+        });
     }
-
-    // async handleCountryChange(country) {
-    //     const fetchedData = await fetchCountryData(country);
-    //     if (country === 'IND') {
-    //         let fetchedDailyTrends = await fetchDailyTrends(country);
-    //         //let fetchedStateWiseData = await fetchStateWiseData(country);
-    //         if (fetchedDailyTrends) {
-    //             /* reformatted the dailyconfirmed as recharts expects values in numbers instaed of strings */
-    //             let formattedDailyTrends = fetchedDailyTrends.data.cases_time_series
-    //                 .slice(-7)
-    //                 .map((obj) => {
-    //                     obj['dailyconfirmed'] = parseInt(obj['dailyconfirmed']);
-    //                     obj['dailydeceased'] = parseInt(obj['dailyconfirmed']);
-    //                     obj['dailyrecovered'] = parseInt(obj['dailyrecovered']);
-    //                     return obj;
-    //                 });
-    //             console.log(formattedDailyTrends);
-    //             this.setState({
-    //                 country: country,
-    //                 dailyTrendData: formattedDailyTrends,
-    //             });
-    //         }
-    //     }
-    //     // if (country) {
-    //     this.setState({ country: country, data: fetchedData.data });
-    //     // } else {
-    //     //     this.setState({ country: '', data: fetchedData.data });
-    //     // }
-    // }
 
     activeView = (value) => {
         this.setState({ activeView: value });
+        if (value === 1) {
+            this.setState({ country: 'IND' });
+        } else {
+            this.setState({ country: 'GLOBAL' });
+        }
     };
 
     showIcon = (i) => {
@@ -95,7 +75,7 @@ class App extends React.Component {
             case 1:
                 return <FontAwesomeIcon icon={faChartPie} className="subnavIcon" />;
             case 2:
-                return <FontAwesomeIcon icon={faHospital} className="subnavIcon" />;
+                return <FontAwesomeIcon icon={faHospitalSymbol} className="subnavIcon" />;
             case 3:
                 return <FontAwesomeIcon icon={faQuestionCircle} className="subnavIcon" />;
             default:
@@ -103,40 +83,36 @@ class App extends React.Component {
         }
     };
 
-    async handleRadioChange(e) {
-        console.log(e.target.value);
-        this.setState({ country: e.target.value });
-
+    handleRadioChange(e) {
         if (e.target.value === 'GLOBAL') {
-            const fetchedGlobalData = await fetchGlobalData();
-            this.setState({ data: fetchedGlobalData });
+            this.setState({ cardData: this.state.globalData });
         } else {
-            const fetchedDailyTrends = await fetchDailyTrends();
-            const stateWiseData = fetchedDailyTrends.data.statewise;
-            const timeSeriesData = fetchedDailyTrends.data.cases_time_series;
-            const totalData = fetchedDailyTrends.data.statewise[0];
-            const formattedIndiaData = {
-                confirmed: totalData.confirmed,
-                recovered: totalData.recovered,
-                deaths: totalData.deaths,
-                lastUpdate: totalData.lastupdatedtime,
-            };
-            this.setState({
-                data: formattedIndiaData,
-                stateWiseData: stateWiseData,
-                timeSeriesData: timeSeriesData,
-            });
+            this.setState({ cardData: this.state.indiaData });
+        }
+        this.setState({ country: e.target.value });
+    }
+
+    handleYTDChange(e) {
+        let modifiedYTDData = this.state.timeSeriesData;
+        if (e.target.value === 'YTD') {
+            this.setState({ modifiedYTDData: modifiedYTDData, timeSpan: e.target.value });
+        } else if (e.target.value === '1MONTH') {
+            modifiedYTDData = modifiedYTDData.slice(-30);
+            this.setState({ modifiedYTDData: modifiedYTDData, timeSpan: e.target.value });
+        } else {
+            modifiedYTDData = modifiedYTDData.slice(-7);
+            this.setState({ modifiedYTDData: modifiedYTDData, timeSpan: e.target.value });
         }
     }
     render() {
         const {
-            data,
-            dailyTrendData,
+            cardData,
             country,
             activeView,
-            optionSelected,
             stateWiseData,
             timeSeriesData,
+            modifiedYTDData,
+            timeSpan,
         } = this.state;
         return (
             <div className="parentContainer">
@@ -185,12 +161,9 @@ class App extends React.Component {
                         </a>
                     ))}
                 </div>
-                {/* <div className="banner"> Coming Soon: State wise data for India</div> */}
-                {/* <div className="contentArea"> */}
-
                 {activeView === 0 ? (
                     <React.Fragment>
-                        <div className="countryPickerContainer">
+                        <div className="dataScopeRadioGroup">
                             <RadioGroup
                                 style={{ flexDirection: 'row' }}
                                 aria-label="gender"
@@ -205,34 +178,61 @@ class App extends React.Component {
                                 />
                                 <FormControlLabel value="IND" control={<Radio />} label="India" />
                             </RadioGroup>
-                            {country === 'IND' ? (
-                                <StatePicker stateWiseData={stateWiseData} />
-                            ) : null}
-                            {country === 'IND' ? (
-                                <StateWiseTable stateWiseData={stateWiseData} />
-                            ) : null}
                         </div>
                         <div className="cardContainer">
-                            <Cards data={data} />
+                            <Cards data={cardData} country={country} />
                         </div>
+                        <div className="globalChartContainer">
+                            <GlobalLineChart timeSeriesData={timeSeriesData} country={country} />
+                        </div>
+                    </React.Fragment>
+                ) : null}
+                {activeView === 1 ? (
+                    <React.Fragment>
                         {country === 'IND' ? (
                             <div className="trendChartContainer">
                                 <IndiaTrendChart timeSeriesData={timeSeriesData} />
                             </div>
                         ) : null}
-                        {country === 'IND' ? (
-                            <div className="countryChartContainer">
-                                <CountryBarChart countryData={stateWiseData} />
+                        <div className="timeSpan">
+                            <RadioGroup
+                                style={{ flexDirection: 'row' }}
+                                aria-label="gender"
+                                name="country"
+                                value={timeSpan}
+                                onChange={this.handleYTDChange.bind(this)}
+                            >
+                                <FormControlLabel value="YTD" control={<Radio />} label="YTD" />
+                                <FormControlLabel
+                                    value="1MONTH"
+                                    control={<Radio />}
+                                    label="last 1 month"
+                                />
+                                <FormControlLabel
+                                    value="7DAYS"
+                                    control={<Radio />}
+                                    label="last 7 days"
+                                />
+                            </RadioGroup>
+                        </div>
+                        <div className="countryChartContainer">
+                            <div className="indiaChart">
+                                <IndiaTimeSeries timeSeriesData={modifiedYTDData} />
                             </div>
-                        ) : null}
-                        {country === 'GLOBAL' ? (
-                            <div className="globalChartContainer">
-                                <GlobalLineChart />
+                            <div className="indiaChart">
+                                <IndiaBarChart countryData={stateWiseData} />
                             </div>
-                        ) : null}
+                        </div>
+                        <div className="stateWiseTable">
+                            {/* {country === 'IND' ? (
+                                <StatePicker stateWiseData={stateWiseData} />
+                            ) : null} */}
+                            {country === 'IND' ? (
+                                <StateWiseTable stateWiseData={stateWiseData} />
+                            ) : null}
+                        </div>
                     </React.Fragment>
                 ) : null}
-                {activeView === 1 ? <Precautions /> : null}
                 {activeView === 2 ? <Symptom /> : null}
                 {activeView === 3 ? <TestCentre /> : null}
                 {activeView === 4 ? <Resources /> : null}
@@ -247,20 +247,22 @@ class App extends React.Component {
                 </div>
                 <div className="pageCredit">
                     <Typography style={{ fontSize: '14px' }} gutterBottom>
-                        Made with <img src={loveIcon} className="loveImage" /> in India. Hosted by{' '}
-                        <a href="https://www.netlify.com/">Netlify </a> & data visualization by
-                        <a href="https://recharts.org"> Recharts.</a>
+                        Made with <img src={loveIcon} className="loveImage" /> in India
                     </Typography>
                     <Typography gutterBottom style={{ fontSize: '14px' }}>
+                        Credits : Hosted by <a href="https://www.netlify.com/">Netlify </a> , Charts
+                        by
+                        <a href="https://recharts.org"> Recharts, </a>
                         API Source -{' '}
                         <a href="https://covid19.mathdro.id/api ">
                             https://covid19.mathdro.id/api{' '}
                         </a>{' '}
-                        &{' '}
-                        <a href="https://api.covid19india.org/ ">https://api.covid19india.org/ </a>
+                        ,{' '}
+                        <a href="https://api.covid19india.org/ ">https://api.covid19india.org/ </a>,
                         <br />
-                        Image Source - Google Images &{' '}
-                        <a href="https://www.vectorstock.com/">Vector Stock </a>
+                        image Source - Google Images &{' '}
+                        <a href="https://www.vectorstock.com/">Vector Stock </a> & icons by{' '}
+                        <a href="https://fontawesome.com/ ">FontAwesome</a>
                     </Typography>
                 </div>
             </div>
