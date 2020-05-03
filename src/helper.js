@@ -1,1 +1,1 @@
-export const allViews = ['Analytics', 'Precautions', 'Symptomps', 'Test Centres', 'Resources'];
+export const allViews = ['Tracker', 'InfoGraphics', 'Test Centres', 'Resources'];

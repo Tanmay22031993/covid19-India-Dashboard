@@ -18,20 +18,20 @@
     align-items: center;
 }
 .countryPickerContainer {
-    width: 75%;
-    margin: 20px;
+    width: 90%;
+    /* margin: 20px; */
 }
 .countryChartContainer {
     height: 300px;
     margin: 10px 50px;
-    width: 80%;
+    width: 90%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 .trendChartContainer {
     margin: 10px 50px;
-    width: 80%;
+    width: 90%;
 }
 .socialMedia {
     display: flex;
@@ -71,7 +71,7 @@ a {
     /* align-items: center;
     display: flex; */
     /* background-position: center; */
-    /* height: 125px; */
+    /* height: 60px; */
     width: 100%;
     margin: 1% 5%;
     background-color: #1b1b32;
@@ -79,7 +79,7 @@ a {
 }
 .header .branding {
     color: white;
-    line-height: 100px;
+    /* line-height: 100px; */
     padding-left: 25px;
     font-size: 30px;
 }
@@ -97,8 +97,8 @@ a {
     text-align: center;
     color: #1b1b32;
 }
-.subnav .subnavitems .subnavIcon {
-    vertical-align: middle;
+.subnavIcon {
+    /* vertical-align: middle; */
     margin-right: 5px;
 }
 .subnavInnerContainer {

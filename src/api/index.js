@@ -2,17 +2,20 @@ import axios from 'axios';
 
 const url = 'https://covid19.mathdro.id/api';
 
-export const fetchData = async () => {
+export const fetchGlobalData = async () => {
     try {
-        const {
-            data: { confirmed, recovered, deaths, lastUpdate },
-        } = await axios.get(url);
-
-        return { confirmed, recovered, deaths, lastUpdate };
+        const fetchedData = await axios.get(url);
+        const modifiedData = {
+            confirmed: fetchedData.data.confirmed.value,
+            recovered: fetchedData.data.recovered.value,
+            deaths: fetchedData.data.deaths.value,
+            lastUpdate: fetchedData.data.lastUpdate,
+        };
+        return modifiedData;
     } catch (error) {}
 };
 
-export const fetchDailyData = async () => {
+export const fetchGlobalDailyData = async () => {
     try {
         const { data } = await axios.get(`${url}/daily`);
 
@@ -20,30 +23,29 @@ export const fetchDailyData = async () => {
     } catch (error) {}
 };
 
-export const fetchCountries = async () => {
-    try {
-        const { data } = await axios.get(`${url}/countries`);
+// export const fetchStates = async () => {
+//     try {
+//         const { data } = await axios.get(`${url}/countries`);
 
-        return { data };
-    } catch (error) {}
-};
+//         return { data };
+//     } catch (error) {}
+// };
 
-export const fetchCountryData = async (country) => {
-    try {
-        let url2 = `${url}/countries`;
-        if (country) {
-            url2 = `${url}/countries/${country.value}`;
-        } else {
-            url2 = url;
-        }
-        const { data } = await axios.get(url2);
+// export const fetchCountryData = async (country) => {
+//     try {
+//         let url2;
+//         if (country === 'IND') {
+//             url2 = `${url}/countries/${country}`;
+//         } else {
+//             url2 = 'https://covid19.mathdro.id/api';
+//         }
+//         const { data } = await axios.get(url2);
 
-        return { data };
-    } catch (error) {}
-};
+//         return { data };
+//     } catch (error) {}
+// };
 
 export const fetchDailyTrends = async (country) => {
-    
     try {
         const url = 'https://api.covid19india.org/data.json';
         const { data } = await axios.get(url);
@@ -52,12 +54,11 @@ export const fetchDailyTrends = async (country) => {
     } catch (error) {}
 };
 
-export const fetchStateWiseData = async (country) => {
-    
-    try {
-        const url = 'https://www.mohfw.gov.in/data/datanew.json';
-        const { data } = await axios.get(url);
+// export const fetchIndiaData = async (country) => {
+//     try {
+//         const url = 'https://www.mohfw.gov.in/data/datanew.json';
+//         const { data } = await axios.get(url);
 
-        return { data };
-    } catch (error) {}
-};
+//         return { data };
+//     } catch (error) {}
+// };

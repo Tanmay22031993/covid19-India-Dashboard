@@ -12,8 +12,8 @@ import {
     Legend,
     ResponsiveContainer,
 } from 'recharts';
-function Cards({ data: { confirmed, recovered, deaths, lastUpdate } }) {
-    if (!confirmed) {
+function Cards(props) {
+    if (!props.data.confirmed) {
         return <h2>Loading...</h2>;
     }
     return (
@@ -26,13 +26,13 @@ function Cards({ data: { confirmed, recovered, deaths, lastUpdate } }) {
                             <Typography variant="h5" style={{ color: 'rgba(0, 0, 255, 0.8)' }}>
                                 <CountUp
                                     start={0}
-                                    end={confirmed.value}
+                                    end={parseInt(props.data.confirmed)}
                                     duration={2.5}
                                     separator=","
                                 />
                             </Typography>
                             <Typography color="textSecondary">
-                                {new Date(lastUpdate).toDateString()}
+                                {new Date(props.data.lastUpdate).toDateString()}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -44,13 +44,13 @@ function Cards({ data: { confirmed, recovered, deaths, lastUpdate } }) {
                             <Typography variant="h5" style={{ color: 'rgba(0, 179, 0, 1)' }}>
                                 <CountUp
                                     start={0}
-                                    end={recovered.value}
+                                    end={props.data.recovered}
                                     duration={2.5}
                                     separator=","
                                 />
                             </Typography>
                             <Typography color="textSecondary">
-                                {new Date(lastUpdate).toDateString()}
+                                {new Date(props.data.lastUpdate).toDateString()}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -62,13 +62,13 @@ function Cards({ data: { confirmed, recovered, deaths, lastUpdate } }) {
                             <Typography variant="h5" style={{ color: 'rgba(255, 0, 0, 0.8)' }}>
                                 <CountUp
                                     start={0}
-                                    end={deaths.value}
+                                    end={props.data.deaths}
                                     duration={2.5}
                                     separator=","
                                 />
                             </Typography>
                             <Typography color="textSecondary">
-                                {new Date(lastUpdate).toDateString()}
+                                {new Date(props.data.lastUpdate).toDateString()}
                             </Typography>
                         </CardContent>
                     </Card>

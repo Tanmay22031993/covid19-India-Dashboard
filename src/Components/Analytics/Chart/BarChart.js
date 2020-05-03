@@ -27,14 +27,13 @@ function CountryWiseCases(allData) {
 }
 
 function CountryBarChart(props) {
-    if (props.countryData) {
+    if (props.countryData !== undefined) {
         const modifiedCountryData = [];
         let tempCountryData = {
-            name: 'Infected',
             xaxisLegend: 'Count',
-            infected: props.countryData.confirmed.value,
-            recovered: props.countryData.recovered.value,
-            deaths: props.countryData.deaths.value,
+            infected: props.countryData[0].confirmed,
+            recovered: props.countryData[0].recovered,
+            deaths: props.countryData[0].deaths,
         };
         modifiedCountryData.push(tempCountryData);
         return CountryWiseCases(modifiedCountryData);

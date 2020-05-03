@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchDailyData } from '../../../api/index';
+import { fetchGlobalDailyData } from '../../../api/index';
 import { Typography } from '@material-ui/core';
 import {
     LineChart,
@@ -71,7 +71,7 @@ function GlobalLineChart() {
     let modifiedGlobalData = [];
     useEffect(() => {
         const fetchAPI = async () => {
-            const fetchedData = await fetchDailyData();
+            const fetchedData = await fetchGlobalDailyData();
             setDailyData(fetchedData.data);
         };
         fetchAPI();
